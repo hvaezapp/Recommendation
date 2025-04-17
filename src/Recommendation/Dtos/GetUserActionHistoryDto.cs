@@ -1,15 +1,13 @@
-﻿namespace UserAction.Infrastructure.Consumers.IntegrationEvents;
-
-public record SendUserActionHistoryEvent(IEnumerable<GetUserActionHistoryDto> userActionHistories);
+﻿namespace Recommendation.Dtos;
 
 public class GetUserActionHistoryDto
 {
-    public Guid UserId { get; set; }
     public string? CatalogSlug { get; set; }
     public string? CategoryName { get; set; }
     public ActionType ActionType { get; set; }
 }
 
+#region enums
 public enum ActionType
 {
     Like,
@@ -17,3 +15,4 @@ public enum ActionType
     Bookmark,
     Comment
 }
+#endregion

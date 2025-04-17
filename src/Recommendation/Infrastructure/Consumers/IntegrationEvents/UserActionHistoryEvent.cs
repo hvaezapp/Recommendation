@@ -1,3 +1,3 @@
 ﻿namespace Recommendation.Infrastructure.Consumers.IntegrationEvents;
 
-public record GetUserActionHistoryEvent(Guid userId);
+public record UserActionHistoryEvent(Guid userId);

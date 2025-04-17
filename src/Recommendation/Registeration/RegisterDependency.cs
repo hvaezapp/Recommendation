@@ -1,0 +1,46 @@
+﻿using MassTransit;
+
+namespace Recommendation.Registeration;
+
+public static class RegisterDependency
+{
+    public static IServiceCollection RegisterRedis(this IServiceCollection services, IConfiguration configuration)
+    {
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetValue<string>("CacheSettings:ConnectionString");
+        });
+
+        return services;
+    }
+
+
+    public static IServiceCollection RegisterBroker(this IServiceCollection services, IConfiguration configuration)
+    {
+        var host = configuration.GetValue<string>("BrokerConfiguration:Host") ?? throw new ArgumentNullException("hostname must valid");
+        var username = configuration.GetValue<string>("BrokerConfiguration:UserName") ?? throw new ArgumentNullException("username must valid");
+        var password = configuration.GetValue<string>("BrokerConfiguration:Password") ?? throw new ArgumentNullException("password must valid");
+
+        services.AddMassTransit(configure =>
+        {
+            configure.AddConsumers(typeof(Program).Assembly);
+
+            configure.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.UseRawJsonDeserializer();
+
+                cfg.Host(host, hostConfigure =>
+                {
+                    hostConfigure.Username(username);
+                    hostConfigure.Password(password);
+                });
+
+                cfg.ConfigureEndpoints(context);
+            });
+
+        });
+
+        return services;
+    }
+}
